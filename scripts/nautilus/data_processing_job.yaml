@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-procesing-gcdm-sbdd-0
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+      - command:
+        - bash
+        - -c
+        - cd /data/Repositories/Lab_Repositories/GCDM-SBDD && git checkout main && git pull origin main
+          && /data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/bin/python -W ignore
+          process_bindingmoad.py /data/Repositories/Lab_Repositories/GCDM-SBDD/data/ --ca_only &&
+          cd /data/Repositories/Lab_Repositories/GCDM-SBDD/data && tar -xzf crossdocked_pocket10.tar.gz && cd /data/Repositories/Lab_Repositories/GCDM-SBDD
+          && /data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/bin/python
+          process_crossdock.py /data/Repositories/Lab_Repositories/GCDM-SBDD/data/ --no_H --ca_only
+          && /data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/bin/python
+          process_crossdock.py /data/Repositories/Lab_Repositories/GCDM-SBDD/data/ --no_H
+          && echo 'Done processing both datasets!'
+        env:
+        - name: NCCL_SOCKET_IFNAME
+          value: eth0
+        - name: NCCL_DEBUG
+          value: INFO
+        image: gitlab-registry.nrp-nautilus.io/bioinfomachinelearning/bio-diffusion:bb558b48
+        imagePullPolicy: IfNotPresent
+        name: bio-diffusion
+        ports:
+        - containerPort: 8880
+        resources:
+          limits:
+            cpu: 2
+            memory: 14Gi
+          requests:
+            cpu: 2
+            memory: 12Gi
+        volumeMounts:
+        - mountPath: /data
+          name: acmwhb-gcpnet-pvc-dedicated-0
+        - mountPath: /dev/shm
+          name: dshm
+        workingDir: /data/Repositories/Lab_Repositories/GCDM-SBDD
+      imagePullSecrets:
+      - name: regcred-bio-diffusion
+      restartPolicy: Never
+      volumes:
+      - name: acmwhb-gcpnet-pvc-dedicated-0
+        persistentVolumeClaim:
+          claimName: acmwhb-gcpnet-pvc-dedicated-0
+      - emptyDir:
+          medium: Memory
+        name: dshm

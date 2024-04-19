@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-procesing-gcdm-sbdd-1-bindingmoad-ca-joint-data
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+      - command:
+        - bash
+        - -c
+        - cd /data/Repositories/Lab_Repositories/GCDM-SBDD && git checkout main && git fetch origin && git pull origin main
+          && BABEL_LIBDIR=/data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/lib/openbabel/3.1.0/ /data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/bin/python process_bindingmoad.py /data/Repositories/Lab_Repositories/GCDM-SBDD/data/ --process_test_data_only --ca_only
+        env:
+        - name: NCCL_SOCKET_IFNAME
+          value: eth0
+        - name: NCCL_DEBUG
+          value: INFO
+        image: gitlab-registry.nrp-nautilus.io/bioinfomachinelearning/bio-diffusion:bb558b48
+        imagePullPolicy: IfNotPresent
+        name: bio-diffusion
+        ports:
+        - containerPort: 8880
+        resources:
+          limits:
+            cpu: 2
+            memory: 12Gi
+          requests:
+            cpu: 2
+            memory: 10Gi
+        volumeMounts:
+        - mountPath: /data
+          name: acmwhb-gcpnet-pvc-dedicated-1
+        - mountPath: /dev/shm
+          name: dshm
+        workingDir: /data/Repositories/Lab_Repositories/GCDM-SBDD
+      imagePullSecrets:
+      - name: regcred-bio-diffusion
+      restartPolicy: Never
+      volumes:
+      - name: acmwhb-gcpnet-pvc-dedicated-1
+        persistentVolumeClaim:
+          claimName: acmwhb-gcpnet-pvc-dedicated-1
+      - emptyDir:
+          medium: Memory
+        name: dshm

@@ -1,0 +1,26 @@
+norm_pos_diff: true
+
+scalar_gate: 0
+vector_gate: true  # note: this mimics updating vector features without directly using frame vectors
+
+scalar_nonlinearity: silu
+vector_nonlinearity: silu
+
+nonlinearities:
+  - ${..scalar_nonlinearity}
+  - ${..vector_nonlinearity}
+
+bottleneck: 4
+
+vector_linear: true
+vector_identity: true
+
+default_bottleneck: 4
+
+predict_node_positions: true  # note: if `false`, then the input node positions will not be updated
+predict_node_rep: true  # note: if `false`, then a final projection of the node features will not be performed
+
+node_positions_weight: 1.0
+update_positions_with_vector_sum: false
+
+enable_e3_equivariance: false

@@ -1,0 +1,7 @@
+dataset: bindingmoad  # NOTE: must be one of (`bindingmoad`, `crossdocked`)
+model_type: ca_cond  # NOTE: must be one of (`ca_cond`, `ca_joint`)
+method: ???  # NOTE: must be one of (`egnn`, `gcpnet`)
+input_molecule_dir: results/${dataset}_${model_type}_${method}_test_outputs_processed/ # directory containing input molecules
+input_molecule_metrics_csv_filepath: ${input_molecule_dir}/metrics.csv # filepath to base filepath of input molecule metrics
+input_molecule_vina_energy_csv_filepath: results/${dataset}_${model_type}_${method}_qvina2_scores.csv # filepath to Vina energy scores of input molecules
+bust_results_filepath: results/${dataset}/analysis/${model_type}_${method}_molecule_bust_results.csv # filepath at which bust results have been saved

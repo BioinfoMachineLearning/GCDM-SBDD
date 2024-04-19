@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: acmwhb-gcdm-sbdd-data-transfer-pod-pvc
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: topology.kubernetes.io/region
+            operator: In
+            values:
+            - us-central
+          - key: nvidia.com/gpu.product
+            operator: In
+            values:
+            - NVIDIA-GeForce-GTX-1070
+            - NVIDIA-GeForce-GTX-1080
+            - NVIDIA-GeForce-GTX-1080-Ti
+            - NVIDIA-GeForce-RTX-2080-Ti
+            - NVIDIA-TITAN-Xp
+            - NVIDIA-A10
+            - NVIDIA-GeForce-RTX-3090
+            - NVIDIA-TITAN-RTX
+            - NVIDIA-RTX-A5000
+            - Quadro-RTX-6000
+            - NVIDIA-A40
+            - NVIDIA-RTX-A6000
+            - Quadro-RTX-8000
+  containers:
+  - command:
+    - sh
+    - -c
+    - echo 'I am a new pod for data transfers to one of my PVCs' && sleep infinity
+    env:
+    - name: NCCL_SOCKET_IFNAME
+      value: eth0
+    - name: NCCL_DEBUG
+      value: INFO
+    image: ubuntu:20.04
+    name: acmwhb-gcdm-sbdd-data-transfer-pod-pvc
+    ports:
+    - containerPort: 8880
+    resources:
+      limits:
+        cpu: 2
+        memory: 18Gi
+        nvidia.com/gpu: 1
+      requests:
+        cpu: 2
+        memory: 16Gi
+        nvidia.com/gpu: 1
+    volumeMounts:
+    - mountPath: /data_0
+      name: acmwhb-gcpnet-pvc-dedicated-0
+    - mountPath: /data_1
+      name: acmwhb-gcpnet-pvc-dedicated-1
+    - mountPath: /data_2
+      name: acmwhb-gcpnet-pvc-dedicated-2
+    - mountPath: /data_3
+      name: acmwhb-gcpnet-pvc-dedicated-3
+    - mountPath: /data_4
+      name: acmwhb-gcpnet-pvc-dedicated-4
+    - mountPath: /data_5
+      name: acmwhb-gcpnet-pvc-dedicated-5
+    - mountPath: /data_6
+      name: acmwhb-gcpnet-pvc-dedicated-6
+    - mountPath: /data_7
+      name: acmwhb-gcpnet-pvc-dedicated-7
+    - mountPath: /data_8
+      name: acmwhb-gcpnet-pvc-dedicated-8
+  volumes:
+  - name: acmwhb-gcpnet-pvc-dedicated-0
+    persistentVolumeClaim:
+      claimName: acmwhb-gcpnet-pvc-dedicated-0
+  - name: acmwhb-gcpnet-pvc-dedicated-1
+    persistentVolumeClaim:
+      claimName: acmwhb-gcpnet-pvc-dedicated-1
+  - name: acmwhb-gcpnet-pvc-dedicated-2
+    persistentVolumeClaim:
+      claimName: acmwhb-gcpnet-pvc-dedicated-2
+  - name: acmwhb-gcpnet-pvc-dedicated-3
+    persistentVolumeClaim:
+      claimName: acmwhb-gcpnet-pvc-dedicated-3
+  - name: acmwhb-gcpnet-pvc-dedicated-4
+    persistentVolumeClaim:
+      claimName: acmwhb-gcpnet-pvc-dedicated-4
+  - name: acmwhb-gcpnet-pvc-dedicated-5
+    persistentVolumeClaim:
+      claimName: acmwhb-gcpnet-pvc-dedicated-5
+  - name: acmwhb-gcpnet-pvc-dedicated-6
+    persistentVolumeClaim:
+      claimName: acmwhb-gcpnet-pvc-dedicated-6
+  - name: acmwhb-gcpnet-pvc-dedicated-7
+    persistentVolumeClaim:
+      claimName: acmwhb-gcpnet-pvc-dedicated-7
+  - name: acmwhb-gcpnet-pvc-dedicated-8
+    persistentVolumeClaim:
+      claimName: acmwhb-gcpnet-pvc-dedicated-8

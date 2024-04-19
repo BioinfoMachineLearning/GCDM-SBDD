@@ -1,0 +1,86 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-procesing-gcdm-sbdd-2-crossdocked-ca-cond-egnn-testing
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-A10
+                - NVIDIA-GeForce-RTX-3090
+                - NVIDIA-TITAN-RTX
+                - NVIDIA-RTX-A5000
+                - Quadro-RTX-6000
+      containers:
+      - command:
+        - bash
+        - -c
+        - mkdir -p /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/pdbqt_test_outputs/
+          && mkdir -p /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/qvina_test_outputs/
+          && cd /data/Repositories/Lab_Repositories/GCDM-SBDD
+          && BABEL_LIBDIR=/data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/lib/openbabel/3.1.0/ /data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/bin/python analysis/docking.py
+          --pdbqt_dir /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/pdbqt_test_outputs/
+          --sdf_dir /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/test_outputs/processed/
+          --out_dir /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/qvina_test_outputs/
+          --write_csv --write_dict --dataset crossdocked
+          
+          # && rm -rf /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/test_outputs/ || true
+          # && WANDB__SERVICE_WAIT=3600 /data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/bin/python test.py
+          # /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/checkpoints/best-model-epoch=epoch=906.ckpt
+          # --test_dir /data/Repositories/Lab_Repositories/GCDM-SBDD/data/processed_crossdock_noH_ca_only_temp/test/
+          # --outdir /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/test_outputs/
+          # --fix_n_nodes
+
+          # && /data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/bin/python eval_ligands.py
+          # /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/test_outputs/processed/
+          # /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/test_outputs/processed/
+
+          # && cd analysis && /data/Repositories/Lab_Repositories/GCDM-SBDD/mgltools/bin/python docking_py27.py
+          # /data/Repositories/Lab_Repositories/GCDM-SBDD/data/processed_crossdock_noH_ca_only_temp/test/
+          # /data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/crossdocked_ca_cond_07072023_egnn/pdbqt_test_outputs/
+          # crossdocked
+          # && cd ..
+
+        env:
+        - name: NCCL_SOCKET_IFNAME
+          value: eth0
+        - name: NCCL_DEBUG
+          value: INFO
+        image: gitlab-registry.nrp-nautilus.io/bioinfomachinelearning/bio-diffusion:bb558b48
+        imagePullPolicy: IfNotPresent
+        name: bio-diffusion
+        ports:
+        - containerPort: 8880
+        resources:
+          limits:
+            cpu: 2
+            memory: 12Gi
+            nvidia.com/gpu: 1
+          requests:
+            cpu: 2
+            memory: 10Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - mountPath: /data
+          name: acmwhb-gcpnet-pvc-dedicated-2
+        - mountPath: /dev/shm
+          name: dshm
+        workingDir: /data/Repositories/Lab_Repositories/GCDM-SBDD
+      imagePullSecrets:
+      - name: regcred-bio-diffusion
+      restartPolicy: Never
+      volumes:
+      - name: acmwhb-gcpnet-pvc-dedicated-2
+        persistentVolumeClaim:
+          claimName: acmwhb-gcpnet-pvc-dedicated-2
+      - emptyDir:
+          medium: Memory
+        name: dshm

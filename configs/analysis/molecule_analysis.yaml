@@ -1,0 +1,7 @@
+dataset: bindingmoad  # NOTE: must be one of (`bindingmoad`, `crossdocked`)
+model_type: ca_cond  # NOTE: must be one of (`ca_cond`, `ca_joint`)
+method: ???  # NOTE: must be one of (`egnn`, `gcpnet`)
+input_molecule_dir: results/${dataset}_${model_type}_${method}_test_outputs_processed/ # directory containing input molecules
+input_protein_dir: ${resolve_input_protein_dir:data/,${dataset}} # directory containing input proteins
+bust_results_filepath: results/${dataset}/analysis/${model_type}_${method}_molecule_bust_results.csv # filepath to which to save bust results
+full_report: true # whether to generate a full report or not

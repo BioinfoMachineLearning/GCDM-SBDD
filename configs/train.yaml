@@ -1,0 +1,8 @@
+defaults:
+  - gcpnet/model_cfg: gcp_model.yaml
+  - gcpnet/module_cfg: gcp_module.yaml
+  - gcpnet/layer_cfg: gcp_interaction_layer.yaml
+  - _self_
+
+config: ???
+resume: null

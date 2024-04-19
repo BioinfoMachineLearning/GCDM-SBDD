@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-procesing-gcdm-sbdd-0-bindingmoad-ca-cond-gcpnet-training
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-A10
+                - NVIDIA-GeForce-RTX-3090
+                - NVIDIA-TITAN-RTX
+                - NVIDIA-RTX-A5000
+                - Quadro-RTX-6000
+      containers:
+      - command:
+        - bash
+        - -c
+        - cd /data/Repositories/Lab_Repositories/GCDM-SBDD && git checkout main && git fetch origin && git pull origin main
+          && WANDB__SERVICE_WAIT=3600 /data/Repositories/Lab_Repositories/GCDM-SBDD/GCDM-SBDD/bin/python -u train.py
+          config=/data/Repositories/Lab_Repositories/GCDM-SBDD/configs/bindingmoad_ca_cond_gcpnet.yml
+          resume=/data/Repositories/Lab_Repositories/GCDM-SBDD/logs/train/bindingmoad_ca_cond_06202023_gcpnet/checkpoints/last.ckpt
+        env:
+        - name: NCCL_SOCKET_IFNAME
+          value: eth0
+        - name: NCCL_DEBUG
+          value: INFO
+        image: gitlab-registry.nrp-nautilus.io/bioinfomachinelearning/bio-diffusion:bb558b48
+        imagePullPolicy: IfNotPresent
+        name: bio-diffusion
+        ports:
+        - containerPort: 8880
+        resources:
+          limits:
+            cpu: 2
+            memory: 12Gi
+            nvidia.com/gpu: 1
+          requests:
+            cpu: 2
+            memory: 10Gi
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - mountPath: /data
+          name: acmwhb-gcpnet-pvc-dedicated-0
+        - mountPath: /dev/shm
+          name: dshm
+        workingDir: /data/Repositories/Lab_Repositories/GCDM-SBDD
+      imagePullSecrets:
+      - name: regcred-bio-diffusion
+      restartPolicy: Never
+      volumes:
+      - name: acmwhb-gcpnet-pvc-dedicated-0
+        persistentVolumeClaim:
+          claimName: acmwhb-gcpnet-pvc-dedicated-0
+      - emptyDir:
+          medium: Memory
+        name: dshm
