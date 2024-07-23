@@ -1,4 +1,5 @@
 import math
+import os
 from argparse import Namespace
 from omegaconf import OmegaConf
 from typing import Optional
@@ -88,8 +89,14 @@ class LigandPocketDDPM(pl.LightningModule):
             # Add large value that will be flushed.
             self.gradnorm_queue.add(3000)
 
-        smiles_list = None if eval_params.smiles_file is None \
-            else np.load(eval_params.smiles_file)
+        eval_smiles_file = (
+            eval_params.smiles_file
+            if eval_params.smiles_file is not None
+            and os.path.exists(eval_params.smiles_file)
+            else None
+        )
+        smiles_list = None if eval_smiles_file is None \
+            else np.load(eval_smiles_file)
         self.ligand_metrics = BasicMolecularMetrics(self.dataset_info,
                                                     smiles_list)
         self.ligand_type_distribution = CategoricalDistribution(

@@ -159,6 +159,7 @@ data/*/*/*.sdf
 
 # GCDM-SBDD
 checkpoints/
+experiments/
 qvina2.1
 .env
 .autoenv
