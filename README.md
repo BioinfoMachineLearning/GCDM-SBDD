@@ -224,8 +224,9 @@ __Note:__ You will still need to download the checkpoints and data as described 
 
 ## Acknowledgements
 
-Bio-Diffusion builds upon the source code and data from the following projects:
+GCDM-SBDD builds upon the source code and data from the following projects:
 
+* [Bio-Diffusion](https://github.com/BioinfoMachineLearning/Bio-Diffusion)
 * [DiffSBDD](https://github.com/arneschneuing/DiffSBDD)
 * [GCPNet](https://github.com/BioinfoMachineLearning/GCPNet)
 * [PoseBusters](https://github.com/maabuu/posebusters)
