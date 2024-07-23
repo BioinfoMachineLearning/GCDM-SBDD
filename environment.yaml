@@ -242,6 +242,7 @@ dependencies:
       - poetry==1.5.1
       - poetry-core==1.6.1
       - poetry-plugin-export==1.4.0
+      - posebusters==0.2.16
       - prettytable==3.8.0
       - ptyprocess==0.7.0
       - pycparser==2.21
