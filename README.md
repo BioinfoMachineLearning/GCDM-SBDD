@@ -22,6 +22,7 @@ This is the official structure-based drug design (**SBDD**) codebase of the pape
 
 - [System requirements](#system-requirements)
 - [Installation guide](#installation-guide)
+- [Tutorials](#tutorials)
 - [Demo](#demo)
   - [Sample molecules for a given pocket](#sample-molecules-for-a-given-pocket)
 - [Instructions for use](#instructions-for-use)
@@ -132,6 +133,13 @@ Process the raw data using
 ```bash
 python process_crossdock.py <crossdocked_dir> --no_H
 ```
+
+## Tutorials
+
+We provide a two-part tutorial series of Jupyter notebooks to provide users with a real-world example of how to use `GCDM-SBDD` for pocket-based molecule generation and filtering, as outlined below.
+
+1. [Generating molecules in target protein pockets](https://github.com/BioinfoMachineLearning/GCDM-SBDD/blob/main/notebooks/pocket_based_molecule_generation.ipynb)
+2. [Filtering generated molecules using PoseBusters](https://github.com/BioinfoMachineLearning/GCDM-SBDD/blob/main/notebooks/molecule_filtering_with_posebusters.ipynb)
 
 ## Demo
 
