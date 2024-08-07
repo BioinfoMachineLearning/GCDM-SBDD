@@ -19,6 +19,7 @@ if __name__ == "__main__":
     parser.add_argument('--all_frags', action='store_true')
     parser.add_argument('--sanitize', action='store_true')
     parser.add_argument('--relax', action='store_true')
+    parser.add_argument('--sample_chain', action='store_true')
     parser.add_argument('--resamplings', type=int, default=1)
     parser.add_argument('--jump_length', type=int, default=1)
     parser.add_argument('--timesteps', type=int, default=None)
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     molecules = model.generate_ligands(
         args.pdbfile, args.n_samples, args.resi_list, args.ref_ligand,
         num_nodes_lig, args.sanitize, largest_frag=not args.all_frags,
-        relax_iter=(200 if args.relax else 0),
+        relax_iter=(200 if args.relax else 0), sample_chain=args.sample_chain,
         resamplings=args.resamplings, jump_length=args.jump_length,
         timesteps=args.timesteps)
 

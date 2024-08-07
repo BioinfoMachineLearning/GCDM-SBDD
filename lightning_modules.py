@@ -709,8 +709,8 @@ class LigandPocketDDPM(pl.LightningModule):
 
     def generate_ligands(self, pdb_file, n_samples, pocket_ids=None,
                          ref_ligand=None, num_nodes_lig=None, sanitize=False,
-                         largest_frag=False, relax_iter=0, timesteps=None,
-                         **kwargs):
+                         largest_frag=False, relax_iter=0, sample_chain=False,
+                         timesteps=None, **kwargs):
         """
         Generate ligands given a pocket
         Args:
@@ -724,11 +724,14 @@ class LigandPocketDDPM(pl.LightningModule):
             sanitize: whether to sanitize molecules or not
             largest_frag: only return the largest fragment
             relax_iter: number of force field optimization steps
+            sample_chain: sample a chain instead of a single molecule
             timesteps: number of denoising steps, use training value if None
             kwargs: additional inpainting parameters
         Returns:
             list of molecules
         """
+        if sample_chain:
+            assert n_samples == 1, 'Chain sampling is only supported for single-molecule batches.'
 
         assert (pocket_ids is None) ^ (ref_ligand is None)
 
@@ -806,6 +809,9 @@ class LigandPocketDDPM(pl.LightningModule):
             pocket_mask_fixed = torch.ones(len(pocket['mask']),
                                            device=self.device)
 
+            if sample_chain:
+                raise NotImplementedError('Chain sampling is not yet supported for inpainting.')
+
             xh_lig, xh_pocket, lig_mask, pocket_mask = self.ddpm.inpaint(
                 ligand, pocket, lig_mask_fixed, pocket_mask_fixed,
                 timesteps=timesteps, **kwargs)
@@ -814,37 +820,67 @@ class LigandPocketDDPM(pl.LightningModule):
         elif type(self.ddpm) == ConditionalDDPM:
             xh_lig, xh_pocket, lig_mask, pocket_mask = \
                 self.ddpm.sample_given_pocket(pocket, num_nodes_lig,
+                                              return_frames=(self.ddpm.T if timesteps is None else timesteps) if sample_chain else 1,
                                               timesteps=timesteps)
 
         else:
             raise NotImplementedError
 
-        # Move generated molecule back to the original pocket position
-        pocket_com_after = scatter_mean(
-            xh_pocket[:, :self.x_dims], pocket_mask, dim=0)
-
-        xh_pocket[:, :self.x_dims] += \
-            (pocket_com_before - pocket_com_after)[pocket_mask]
-        xh_lig[:, :self.x_dims] += \
-            (pocket_com_before - pocket_com_after)[lig_mask]
-
         # Build mol objects
-        lig_mask = lig_mask.cpu()
-        x = xh_lig[:, :self.x_dims].detach().cpu()
-        atom_type = xh_lig[:, self.x_dims:].argmax(1).detach().cpu()
-
         molecules = []
-        for mol_pc in zip(utils.batch_to_list(x, lig_mask),
-                          utils.batch_to_list(atom_type, lig_mask)):
+        if sample_chain:
+            # Move generated molecule chain back to the original pocket position
+            pocket_com_after = scatter_mean(
+                xh_pocket[:, :, :self.x_dims], pocket_mask, dim=1)
 
-            mol = build_molecule(*mol_pc, self.dataset_info, add_coords=True)
-            mol = process_molecule(mol,
-                                   add_hydrogens=False,
-                                   sanitize=sanitize,
-                                   relax_iter=relax_iter,
-                                   largest_frag=largest_frag)
-            if mol is not None:
-                molecules.append(mol)
+            xh_pocket[:, :, :self.x_dims] += \
+                (pocket_com_before - pocket_com_after)
+            xh_lig[:, :, :self.x_dims] += \
+                (pocket_com_before - pocket_com_after)
+
+            xh_lig = utils.reverse_tensor(xh_lig)
+            x = xh_lig[:, :, :self.x_dims].detach().cpu()
+            atom_types = xh_lig[:, :, self.x_dims:].argmax(-1).detach().cpu()
+            for atom_pos, atom_types in zip(x, atom_types):
+                mol = build_molecule(
+                    atom_pos,
+                    atom_types,
+                    dataset_info=self.dataset_info,
+                    add_coords=True
+                )
+                mol = process_molecule(
+                    rdmol=mol,
+                    add_hydrogens=False,
+                    sanitize=sanitize,
+                    relax_iter=relax_iter,
+                    largest_frag=largest_frag
+                )
+                if mol is not None:
+                    molecules.append(mol)
+        else:
+            # Move generated molecule back to the original pocket position
+            pocket_com_after = scatter_mean(
+                xh_pocket[:, :self.x_dims], pocket_mask, dim=0)
+
+            xh_pocket[:, :self.x_dims] += \
+                (pocket_com_before - pocket_com_after)[pocket_mask]
+            xh_lig[:, :self.x_dims] += \
+                (pocket_com_before - pocket_com_after)[lig_mask]
+
+            lig_mask = lig_mask.cpu()
+            x = xh_lig[:, :self.x_dims].detach().cpu()
+            atom_type = xh_lig[:, self.x_dims:].argmax(1).detach().cpu()
+            for mol_pc in zip(utils.batch_to_list(x, lig_mask),
+                            utils.batch_to_list(atom_type, lig_mask)):
+
+                mol = build_molecule(*mol_pc, self.dataset_info, add_coords=True)
+                mol = process_molecule(mol,
+                                    add_hydrogens=False,
+                                    sanitize=sanitize,
+                                    relax_iter=relax_iter,
+                                    largest_frag=largest_frag)
+                if mol is not None:
+                    molecules.append(mol)
 
         return molecules
 
