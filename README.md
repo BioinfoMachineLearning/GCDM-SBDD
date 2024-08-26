@@ -6,7 +6,7 @@
 <a href="https://pytorchlightning.ai/"><img alt="Lightning" src="https://img.shields.io/badge/-Lightning-792ee5?logo=pytorchlightning&logoColor=white"></a>
 <a href="https://hydra.cc/"><img alt="Config: Hydra" src="https://img.shields.io/badge/Config-Hydra-89b8cd"></a>
 [![Paper](http://img.shields.io/badge/arXiv-2302.04313-B31B1B.svg)](https://arxiv.org/abs/2302.04313)
-[![Checkpoints DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10995319.svg)](https://doi.org/10.5281/zenodo.10995319)
+[![Checkpoints DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13375913.svg)](https://doi.org/10.5281/zenodo.13375913)
 
 </div>
 
@@ -84,7 +84,7 @@ Download checkpoints (~500 MB extracted: ~2 minutes)
 **Note**: Make sure to be located in the project's root directory beforehand (e.g., `~/GCDM-SBDD/`)
 ```bash
 # fetch and extract model checkpoints directory
-wget https://zenodo.org/record/10995319/files/GCDM_SBDD_Checkpoints.tar.gz
+wget https://zenodo.org/record/13375913/files/GCDM_SBDD_Checkpoints.tar.gz
 tar -xzf GCDM_SBDD_Checkpoints.tar.gz
 rm GCDM_SBDD_Checkpoints.tar.gz
 ```
@@ -108,9 +108,9 @@ mamba create -n mgltools -c bioconda mgltools
 #### Data preparation
 Download the dataset
 ```bash
-wget http://www.bindingmoad.org/files/biou/every_part_a.zip
-wget http://www.bindingmoad.org/files/biou/every_part_b.zip
-wget http://www.bindingmoad.org/files/csv/every.csv
+wget https://zenodo.org/record/13375913/files/every_part_a.zip
+wget https://zenodo.org/record/13375913/files/every_part_b.zip
+wget https://zenodo.org/record/13375913/files/every.csv
 
 unzip every_part_a.zip
 unzip every_part_b.zip
