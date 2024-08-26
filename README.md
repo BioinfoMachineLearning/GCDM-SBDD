@@ -18,6 +18,12 @@ This is the official structure-based drug design (**SBDD**) codebase of the pape
 
 [[arXiv](https://arxiv.org/abs/2302.04313)] [[Nature CommsChem](https://www.nature.com/articles/s42004-024-01233-z)]
 
+<div align="center">
+
+![Animation of a diffusion model-generated 3D binding pocket molecule visualized iteratively](img/GCDM_Sampled_4OZ2_Binding_Pocket_Molecule_Long_Trajectory.gif)
+
+</div>
+
 ## Contents
 
 - [System requirements](#system-requirements)
