@@ -38,4 +38,9 @@ RUN git clone https://github.com/BioinfoMachineLearning/GCDM-SBDD && \
     pip install -e .
 WORKDIR /software/GCDM-SBDD/
 
+## Download Checkpoints
+RUN wget https://zenodo.org/record/13375913/files/GCDM_SBDD_Checkpoints.tar.gz && \
+    tar -xzf GCDM_SBDD_Checkpoints.tar.gz && \
+    rm GCDM_SBDD_Checkpoints.tar.gz
+
 CMD /bin/bash
