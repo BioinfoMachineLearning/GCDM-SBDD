@@ -224,7 +224,7 @@ python3 analysis/docking.py --pdbqt_dir <docking_py27_outdir> --sdf_dir <test_ou
 
 ## Docker
 
-To run this project in a Docker container, you can use the following commands:
+To build this project in a Docker container, you can use the following commands:
 
 ```bash
 ## Build the image
@@ -233,7 +233,16 @@ docker build -t gcdm-sbdd .
 ## Run the container (with GPUs and mounting the current directory)
 docker run -it --gpus all -v .:/mnt --name gcdm-sbdd gcdm-sbdd
 ```
-__Note:__ You will still need to download the checkpoints and data as described in the installation guide. Then, update the Python commands to point to the desired local location of your files (e.g., `/mnt/checkpoints` and `/mnt/outputs`) once in the container.
+
+This Docker image is also available on Docker Hub at [`cford38/gcdm-sbdd`](https://hub.docker.com/r/cford38/gcdm-sbdd), which can be run with the following command:
+
+```bash
+# docker pull cford38/gcdm-sbdd
+
+docker run -it --gpus all -v .:/mnt --name gcdm-sbdd cford38/gcdm-sbdd
+```
+(Note: This image includes the checkpoints in the main working directory `/software/GCDM-SBDD/checkpoints/`.)
+
 
 
 ## Acknowledgements
