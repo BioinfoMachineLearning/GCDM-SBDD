@@ -140,6 +140,17 @@ Process the raw data using
 python process_crossdock.py <crossdocked_dir> --no_H
 ```
 
+### Finetuning Set
+#### Data preparation
+Download your desired finetuning dataset of protein-ligand complexes, each stored in a single PDB file (e.g., `1a4z_LIG:A:403.pdb`), to `data/finetuning_set`, and then run
+``` bash
+python process_finetuning_set.py <finetuning_set_dir>
+```
+or, to suppress warnings,
+```bash
+python -W ignore process_finetuning_set.py <finetuning_set_dir>
+```
+
 ## Tutorials
 
 We provide a two-part tutorial series of Jupyter notebooks to provide users with a real-world example of how to use `GCDM-SBDD` for pocket-based molecule generation and filtering, as outlined below.

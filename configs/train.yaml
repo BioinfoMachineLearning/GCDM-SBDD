@@ -6,3 +6,5 @@ defaults:
 
 config: ???
 resume: null
+overwrite_config_with_checkpoint: True
+log_every_n_steps: 50

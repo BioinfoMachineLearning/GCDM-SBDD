@@ -63,7 +63,8 @@ def main(args):
         resume_config = torch.load(
             ckpt_path, map_location=torch.device('cpu'))['hyper_parameters']
 
-        config = merge_configs(config, resume_config)
+        if args.overwrite_config_with_checkpoint:
+            config = merge_configs(config, resume_config)
 
     args = Namespace(**merge_args_and_yaml(OmegaConf.to_container(args, resolve=True), config))
 
@@ -124,6 +125,7 @@ def main(args):
         accumulate_grad_batches=args.accumulate_grad_batches,
         accelerator='gpu', devices=args.gpus,
         strategy=args.strategy if hasattr(args, "strategy") else ('ddp' if args.gpus > 0 else None),
+        log_every_n_steps=args.log_every_n_steps,
     )
 
     trainer.fit(model=pl_module, ckpt_path=ckpt_path)

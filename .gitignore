@@ -144,6 +144,7 @@ dmypy.json
 *.tar
 *.tar.gz
 checkpoints/local/
+data/finetuning_set*/
 data/every.csv
 data/split_by_name.pt
 data/*/*.png
@@ -161,6 +162,7 @@ data/*/*/*.sdf
 checkpoints/
 experiments/
 forks/
+logs/
 qvina2.1
 .env
 .autoenv
