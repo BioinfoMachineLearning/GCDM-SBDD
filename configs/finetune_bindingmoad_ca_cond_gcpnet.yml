@@ -13,7 +13,7 @@ pocket_representation: 'CA'
 batch_size: 1
 accumulate_grad_batches: 1
 lr: 1.0e-4
-n_epochs: 100
+n_epochs: 500
 num_workers: 1
 gpus: 1
 clip_grad: True

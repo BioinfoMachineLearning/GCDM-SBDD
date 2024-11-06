@@ -101,7 +101,7 @@ def main(args):
         group=args.dataset,
         name=args.run_name,
         id=args.run_name,
-        # resume='must' if ckpt_path is not None else False,
+        resume='must' if ckpt_path is not None else False,
         entity=args.wandb_params.entity,
         mode=args.wandb_params.mode,
     )
