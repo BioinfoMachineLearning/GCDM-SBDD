@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="GCDM-SBDD",
-    version="0.0.1",
+    version="0.0.2",
     description="A geometry-complete diffusion model for structure-based drug design.",
     author="Alex Morehead",
     author_email="acmwhb@umsystem.edu",
