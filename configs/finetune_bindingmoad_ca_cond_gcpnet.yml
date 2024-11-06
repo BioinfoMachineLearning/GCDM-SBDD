@@ -13,7 +13,7 @@ pocket_representation: 'CA'
 batch_size: 1
 accumulate_grad_batches: 1
 lr: 1.0e-4
-n_epochs: 500
+n_epochs: 484
 num_workers: 1
 gpus: 1
 clip_grad: True
@@ -49,9 +49,9 @@ diffusion_params:
   diffusion_loss_type: 'l2'
   normalize_factors: [1, 4]  # [x, h]
 
-eval_epochs: 25
-visualize_sample_epoch: 25
-visualize_chain_epoch: 25
+eval_epochs: 10
+visualize_sample_epoch: 10
+visualize_chain_epoch: 10
 eval_params:
   n_eval_samples: 100
   eval_batch_size: 100

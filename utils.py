@@ -77,6 +77,8 @@ def write_sdf_file(sdf_path, molecules):
     #    for mol in molecules:
     #        w.write(mol)
 
+    sdf_path.parent.mkdir(parents=True, exist_ok=True)
+
     w = Chem.SDWriter(str(sdf_path))
     for m in molecules:
         if m is not None:
