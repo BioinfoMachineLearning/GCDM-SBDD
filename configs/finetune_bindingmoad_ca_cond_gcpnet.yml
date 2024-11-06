@@ -1,4 +1,4 @@
-run_name: 'finetune_bindingmoad_ca_cond_11052024_gcpnet'
+run_name: 'finetuning_set_bindingmoad_ca_cond_11052024_gcpnet'
 logdir: '/bml/acmwhb/Repositories/Lab_Repositories/GCDM-SBDD/logs/train'
 wandb_params:
   mode: 'online'  # disabled, offline, online
